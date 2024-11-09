@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Despesas e Receitas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Controle de Despesas e Receitas</h1>
+        
+        <!-- Formulário para adicionar nova transação -->
+        <form @submit.prevent="addTransaction">
+            <input type="text" v-model="newTransaction.description" placeholder="Descrição" required>
+            <input type="number" v-model.number="newTransaction.amount" placeholder="Valor" required>
+            <button type="submit">Adicionar Transação</button>
+        </form>
+        
+        <!-- Lista de transações -->
+        <ul class="transactions-list">
+            <li v-for="(transaction, index) in paginatedTransactions" :key="index" 
+                :class="{'credit': transaction.amount > 0, 'debit': transaction.amount < 0, 'negative-balance': calculateBalance(index) < 0}">
+                <div>{{ transaction.description }}: {{ formatAmount(transaction.amount) }} | Saldo: {{ formatAmount(calculateBalance(index)) }}</div>
+                <button @click="moveTransaction(index, -1)">⬆️</button>
+                <button @click="moveTransaction(index, 1)">⬇️</button>
+                <button @click="removeTransaction(index)">Remover</button>
+            </li>
+        </ul>
+
+        <!-- Paginação -->
+        <div class="pagination">
+            <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+            <span>Página {{ currentPage }}</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
